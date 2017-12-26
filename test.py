@@ -27,7 +27,7 @@ def generate_records(sequences):
 
 class SequenceTestCase(unittest.TestCase):
     def test_fasta_read(self):
-        records = read_fasta_file("dna.example.fasta")
+        records = read_fasta_file("data/dna.example.fasta")
         self.assertEqual(len(records), 25)
         for i, record in enumerate(records):
             self.assertEqual(i, record.record_number)
