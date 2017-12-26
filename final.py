@@ -82,6 +82,10 @@ class RecordCollection(object):
         return repeats
 
 def find_orf(record, frame = 1):
+    """
+    Finds a list of open reading frames, which is a sub-sequence that begins with a start codon ("ATG"), and ends with\
+    an end codon ("TAA", "TGA", "TAG"), based on a forward reading frame
+    """
     start_indices = []
     stop_indices = []
     start_codon = "ATG"
@@ -106,7 +110,6 @@ def find_orf(record, frame = 1):
                 last_index = stop_index + 3
                 break
 
-    # print orfs
     return orfs
 
 def read_fasta_file(filename):
@@ -118,6 +121,10 @@ def read_fasta_file(filename):
     return records
 
 def find_repeats(sequence, repeat_length, repeats_dict = {}):
+    """
+    Returns a dictionary of repeats (repeat_sequence -> num_occurrences) of a specified length
+    in a given sequence
+    """
     for i in range(len(sequence)):   
         read = str(sequence[i:i + repeat_length])
         if read and len(read) == repeat_length:

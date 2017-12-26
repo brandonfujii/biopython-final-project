@@ -3,7 +3,7 @@ from random import randrange, choice
 from uuid import uuid4
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-from final import RecordCollection, read_fasta_file, find_orf, find_repeats
+from final import RecordCollection, read_fasta_file, find_orf, find_repeats, find_max_in_dict
 
 def generate_random_sequence(sequence_length):
     return ''.join(choice("ACGT") for _ in range(sequence_length))    
@@ -106,6 +106,37 @@ class SequenceTestCase(unittest.TestCase):
                     self.fail("Expected %s but received empty ORFs for record at index %i" % (expected, i))
 
                 self.assertEqual(str(orfs[0].sequence), expected)
+
+    def test_repeats(self):
+        sequence = "ACGGTCAATTCGAACTACTGGCAGAACGTGCAGAAAGGCGCGAAGGCGGCGCTCGACGGCGCGAAGGGCT\
+ACACGATGACGTTCCAGGGCCCGGCGGCCGAGTCCGACATCAGCGGCCAGGTCAACATGGTCGACAACGC\
+GGTCACGCGGCATGTGGCGGGCATCGTGCTCGCGCCGTCCGATCCCGATGCGCTGGTGCCCGCGATCAAG\
+AAGGCGTGGGAAGCGCACATTCCCGTCGTGCTGATCGACTCGGCGATCGCGGACGCCGGCAAGCCGTACT\
+ACCAGGCGTTCCTGTCGACCGACAACGAGAAGGCGGGCGCGCTGTGCGCGAAGGCGCTGATCGACCGCGT\
+CGGGCAGTCGGGCAAGATCGCGATCATGTCGTACGTGCCGGGCGCGGGGTCCGAGGTCAGCCGCGTCGGC\
+GGGTTCCGCAAGTACATCGAGAGCCATTCGAAGCTGCAGGTCGTCGGCCCGTACTACTCGCAATCGCAAA\
+TGGCGACCGCGCTGAACCAGACGACCGACGTGCTGTCGGCGAACCCGGACCTGAAGGGCATCTTCGGCGC\
+GAACGAGCCGACCGCGGTCGGGATGGGCCGTGCGCTGAAGCAGTCGGGCAAGGCGGGCAAGGTGGTGGCG\
+ATCGGGTTCGACGGCAACGAGGACCTGCAGGGCTTCGTGCGCGACGGCACCGTGCAGGCGATCGCCGTGC"
+
+        expected_results = {
+            '1': (258, 'G'), 
+            '2': (114, 'CG'),
+            '3': (43, 'GCG'),
+            '4': (20, 'GGCG'),
+            '5': (9, 'CGTGC'),
+            '6': (6, 'AAGGCG'),
+            '7': (4, 'GCGCGAA'),
+            '8': (3, 'GTCGGGCA'),
+            '9': (3, 'GCGCGAAGG')
+        }
+
+        for repeat_length in range(1, 10):
+            repeats = {}
+            repeats = find_repeats(sequence, repeat_length, repeats)
+            for repeat, num_occurrences in repeats.items():
+                self.assertEqual(repeat_length, len(repeat))
+            self.assertEqual(expected_results[str(repeat_length)], find_max_in_dict(repeats))
 
 if __name__ == '__main__':
     unittest.main()
